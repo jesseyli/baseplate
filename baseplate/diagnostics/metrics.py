@@ -51,11 +51,12 @@ class MetricsServerSpanObserver(SpanObserver):
         self.batch.counter(self.base_name + "." + suffix).increment()
         self.batch.flush()
 
+    def on_local_span_created(self, span):
+        observer = MetricsLocalSpanObserver(self.batch, span)
+        span.register(observer)
+
     def on_child_span_created(self, span):
-        if isinstance(span, LocalSpan):
-            observer = MetricsLocalSpanObserver(self.batch, span)
-        else:
-            observer = MetricsClientSpanObserver(self.batch, span)
+        observer = MetricsClientSpanObserver(self.batch, span)
         span.register(observer)
 
 

@@ -69,6 +69,9 @@ class SpanObserver(object):
         """
         pass
 
+    def on_local_span_created(self, span):
+        pass
+
 
 class ServerSpanObserver(SpanObserver):
     """Interface for an observer that watches the server span."""
@@ -866,12 +869,14 @@ class LocalSpan(Span):
                 raise ValueError("Cannot create local span without component name.")
             span.component_name = component_name
             context_copy.shadow_context_attr('trace', span)
+            for observer in self.observers:
+                observer.on_local_span_created(span)
         else:
             span = Span(
                 self.trace_id, self.id, span_id, self.sampled,
                 self.flags, name, self.context)
-        for observer in self.observers:
-            observer.on_child_span_created(span)
+            for observer in self.observers:
+                observer.on_child_span_created(span)
         return span
 
 
