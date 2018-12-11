@@ -12,6 +12,9 @@ from . import ContextFactory
 from ..retry import RetryPolicy
 
 
+DEFAULT_RETRY_POLICY = RetryPolicy.new(attempts=1)
+
+
 class ThriftContextFactory(ContextFactory):
     """Thrift client pool context factory.
 
@@ -79,7 +82,7 @@ class _PooledClientProxy(object):
         self.pool = pool
         self.server_span = server_span
         self.namespace = namespace
-        self.retry_policy = retry_policy or RetryPolicy.new(attempts=1)
+        self.retry_policy = retry_policy or DEFAULT_RETRY_POLICY
 
     @contextlib.contextmanager
     def retrying(self, **policy):
