@@ -61,7 +61,6 @@ class ContextSpanObserver(SpanObserver):
         self.name = name
         self.context_factory = context_factory
 
-    def on_child_span_created(self, child_span):
-        if isinstance(child_span, LocalSpan):
-            context_attr = self.context_factory.make_object_for_context(self.name, child_span)
-            child_span.context.shadow_context_attr(self.name, context_attr)
+    def on_local_span_created(self, child_span):
+        context_attr = self.context_factory.make_object_for_context(self.name, child_span)
+        child_span.context.shadow_context_attr(self.name, context_attr)
